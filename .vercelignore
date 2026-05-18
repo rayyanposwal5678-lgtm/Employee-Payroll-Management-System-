@@ -1,0 +1,17 @@
+# Vercel build
+api/
+# SQLite database
+db.sqlite3
+# Virtual environment
+.venv/
+venv/
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+# IDE
+.vscode/
+.idea/
+*.swp
+# OS
+.DS_Store
