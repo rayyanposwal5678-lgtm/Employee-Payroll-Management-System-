@@ -1,0 +1,65 @@
+{% extends 'core/base.html' %}
+
+{% block title %}My Earnings{% endblock %}
+{% block breadcrumb %}My Earnings{% endblock %}
+
+{% block content %}
+<div class="row mb-4 animate-slide-up">
+    <div class="col-12">
+        <h2 class="fw-bold text-dark">Earning History</h2>
+        <p class="text-muted">Review your monthly payslips and detailed earnings breakdown.</p>
+    </div>
+</div>
+
+<div class="card-box premium-shadow-lg mb-4 animate-slide-up">
+    <div class="d-flex align-items-center justify-content-between mb-4 border-bottom pb-3">
+        <h5 class="fw-bold mb-0 text-dark"><i class="fas fa-history text-accent me-2"></i> Payment Records</h5>
+        <button class="btn btn-light btn-sm fw-bold text-accent" onclick="window.print()">
+            <i class="fas fa-print me-1"></i> Print Statement
+        </button>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table table-hover table-sm align-middle epms-datatable">
+            <thead>
+                <tr>
+                    <th>Period</th>
+                    <th class="text-end">Basic Salary</th>
+                    <th class="text-end">Allowances</th>
+                    <th class="text-end">Deductions</th>
+                    <th class="text-end">Net Salary</th>
+                    <th class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payroll in payrolls %}
+                <tr>
+                    <td class="fw-semibold">
+                        <div class="text-dark">{{ payroll.month }} {{ payroll.year }}</div>
+                        <small class="text-muted">{{ payroll.generated_date|date:"d M Y" }}</small>
+                    </td>
+                    <td class="text-end text-amount font-monospace">${{ payroll.basic_salary }}</td>
+                    <td class="text-end text-amount text-success font-monospace">+${{ payroll.total_allowances }}</td>
+                    <td class="text-end text-amount text-danger font-monospace">-${{ payroll.total_deductions }}</td>
+                    <td class="text-end text-amount">
+                        <span class="h6 fw-bold text-dark">${{ payroll.net_salary }}</span>
+                    </td>
+                    <td class="text-center">
+                        <a href="{% url 'payslip_view' payroll.payroll_id %}" target="_blank" class="btn btn-sm btn-outline-primary rounded-pill px-3">
+                            <i class="fas fa-file-invoice-dollar me-1"></i> View Payslip
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center py-5 text-muted">
+                        <i class="fas fa-receipt fa-3x mb-3 d-block opacity-25"></i>
+                        No payout records found yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

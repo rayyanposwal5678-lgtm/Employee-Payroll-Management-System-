@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payslip - {{ payroll.month }} {{ payroll.year }} - {{ payroll.employee.first_name|upper }}</title>
+    <!-- Google Fonts: Inter, Plus Jakarta Sans & JetBrains Mono -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --danger: #ef4444;
+        }
+
+        body {
+            background: #f1f5f9;
+            font-family: 'Inter', sans-serif;
+            color: var(--dark);
+            padding: 40px 20px;
+        }
+
+        .payslip-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 60px;
+            border-radius: 4px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Diagonal Watermark */
+        .payslip-wrapper::after {
+            content: "CONFIDENTIAL";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 8rem;
+            color: rgba(0, 0, 0, 0.02);
+            font-weight: 900;
+            pointer-events: none;
+            z-index: 0;
+            white-space: nowrap;
+        }
+
+        .payslip-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 2px solid var(--dark);
+            padding-bottom: 30px;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .company-info h2 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin: 0;
+            color: var(--primary);
+        }
+
+        .company-info p {
+            margin: 0;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .payout-meta {
+            text-align: right;
+        }
+
+        .payout-meta h4 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            color: var(--dark);
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .payout-meta p {
+            margin: 0;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .employee-summary {
+            background: var(--light);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .summary-item {
+            margin-bottom: 10px;
+        }
+
+        .summary-label {
+            color: #64748b;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            display: block;
+        }
+
+        .summary-value {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .financial-table {
+            width: 100%;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .financial-table th {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--dark);
+            color: white;
+            padding: 12px 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border: none;
+        }
+
+        .financial-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        .text-amount {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+        }
+
+        .total-row {
+            background: var(--light);
+            font-weight: 700;
+        }
+
+        .net-salary-block {
+            background: var(--primary);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .net-salary-block h2 {
+            font-size: 3.5rem;
+            margin: 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 800;
+        }
+
+        .net-salary-block span {
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-size: 0.9rem;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        .payslip-footer {
+            margin-top: 60px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            position: relative;
+            z-index: 1;
+        }
+
+        .no-print-area {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .payslip-wrapper { box-shadow: none; border: 1px solid #eee; width: 100%; max-width: 100%; padding: 40px; }
+            .no-print-area { display: none; }
+            .net-salary-block { background: #000 !important; color: #fff !important; border: 2px solid #000; }
+            .financial-table th { background: #000 !important; color: #fff !important; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="no-print-area">
+        <button onclick="window.print()" class="btn btn-primary btn-lg shadow">
+            <i class="fas fa-print me-2"></i> Print Official Document
+        </button>
+        <p class="text-muted mt-2 small">Saved as digital copy in employee portal</p>
+    </div>
+
+    <div class="payslip-wrapper">
+        <div class="payslip-header">
+            <div class="company-info">
+                <h2>EPMS CORP.</h2>
+                <p>Enterprise Payroll Management System</p>
+                <p>Department: {{ payroll.employee.department.name }}</p>
+            </div>
+            <div class="payout-meta">
+                <h4>Official Payslip</h4>
+                <p>Period: {{ payroll.month|upper }} {{ payroll.year }}</p>
+                <p>Document ID: #PYR-{{ payroll.payroll_id }}</p>
+            </div>
+        </div>
+
+        <div class="employee-summary">
+            <div class="row">
+                <div class="col-md-3">
+                    <span class="summary-label">Employee Name</span>
+                    <span class="summary-value">{{ payroll.employee.first_name }} {{ payroll.employee.last_name }}</span>
+                </div>
+                <div class="col-md-3">
+                    <span class="summary-label">Designation</span>
+                    <span class="summary-value">{{ payroll.employee.designation.title }}</span>
+                </div>
+                <div class="col-md-3">
+                    <span class="summary-label">Employee ID</span>
+                    <span class="summary-value">EMP-{{ payroll.employee.employee_id }}</span>
+                </div>
+                <div class="col-md-3">
+                    <span class="summary-label">Date Generated</span>
+                    <span class="summary-value">{{ payroll.generated_date|date:"F d, Y" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <table class="financial-table">
+                    <thead>
+                        <tr>
+                            <th>Earnings</th>
+                            <th class="text-end">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Basic Salary</td>
+                            <td class="text-end text-amount">${{ payroll.basic_salary }}</td>
+                        </tr>
+                        <tr>
+                            <td>Allowances (Total)</td>
+                            <td class="text-end text-amount text-success">+${{ payroll.total_allowances }}</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td>Gross Earnings</td>
+                            <td class="text-end text-amount">${{ payroll.basic_salary|add:payroll.total_allowances }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <table class="financial-table">
+                    <thead>
+                        <tr>
+                            <th>Deductions</th>
+                            <th class="text-end">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if payroll.deductions.all %}
+                            {% for deduction in payroll.deductions.all %}
+                            <tr>
+                                <td>{{ deduction.name }}</td>
+                                <td class="text-end text-amount text-danger">-${{ deduction.amount }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td class="text-muted small italic">No specific deductions</td>
+                                <td class="text-end text-amount">$0.00</td>
+                            </tr>
+                        {% endif %}
+                        <tr class="total-row">
+                            <td>Total Deductions</td>
+                            <td class="text-end text-amount">-${{ payroll.total_deductions }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="net-salary-block">
+            <span>Payable Amount</span>
+            <h2>${{ payroll.net_salary }}</h2>
+            <p class="mb-0 mt-2 small opacity-75 text-uppercase">Net Monthly Compensation</p>
+        </div>
+
+        <div class="payslip-footer">
+            <p><i class="fas fa-lock me-1"></i> This document is digitally verified. No physical signature is required.</p>
+            <p>&copy; {% now "Y" %} EPMS Corp. Faisalabad, Pakistan. All Rights Reserved.</p>
+        </div>
+    </div>
+
+</body>
+
+</html>

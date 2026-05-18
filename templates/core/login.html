@@ -1,0 +1,51 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Login{% endblock %}
+
+{% block login_content %}
+<div class="login-container">
+    <div class="text-center mb-3">
+        <div class="brand-icon-lg" style="font-size: 1.8rem;">
+            <i class="fas fa-coins"></i>
+        </div>
+        <h3 class="fw-bold mt-2 mb-1" style="color: var(--text-primary); font-size: 1.3rem;">Welcome Back</h3>
+        <p class="text-muted mb-0" style="font-size: 0.85rem;">Sign in to your EPMS account</p>
+    </div>
+    <form method="post" autocomplete="off">
+        {% csrf_token %}
+        <!-- Fake fields to trick browser autofill -->
+        <input type="text" style="display:none">
+        <input type="password" style="display:none">
+
+        <!-- Real fields with readonly hack -->
+        <div class="mb-3">
+            <label for="id_username" class="form-label" style="font-size: 0.75rem;">Username</label>
+            <div class="input-icon-wrap">
+                <i class="fas fa-user input-icon"></i>
+                <input type="text" name="username" class="form-control form-control-icon" id="id_username" required
+                    readonly onfocus="this.removeAttribute('readonly');"
+                    placeholder="Enter your username"
+                    style="background-color: white !important;">
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="id_password" class="form-label" style="font-size: 0.75rem;">Password</label>
+            <div class="input-icon-wrap">
+                <i class="fas fa-lock input-icon"></i>
+                <input type="password" name="password" class="form-control form-control-icon" id="id_password" required
+                    readonly onfocus="this.removeAttribute('readonly');"
+                    placeholder="Enter your password"
+                    style="background-color: white !important;">
+            </div>
+        </div>
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary fw-bold shadow">
+                <i class="fas fa-arrow-right me-2"></i> Sign In
+            </button>
+        </div>
+    </form>
+    <div class="text-center mt-4">
+        <p class="text-muted small mb-0">Employee Payroll Management System</p>
+    </div>
+</div>
+{% endblock %}

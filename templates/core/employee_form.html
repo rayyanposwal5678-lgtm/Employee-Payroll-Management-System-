@@ -1,0 +1,177 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block breadcrumb %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center animate-slide-up">
+    <div class="col-lg-10">
+        <div class="card-box premium-shadow-lg">
+            <div class="d-flex align-items-center mb-4 border-bottom pb-3">
+                <div class="icon-sm bg-accent-light text-accent rounded me-3 text-center" style="width: 40px; height: 40px; line-height: 40px;">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <h4 class="fw-bold mb-0 text-dark">{{ title }}</h4>
+            </div>
+
+            <form method="post" autocomplete="off" class="premium-form">
+                {% csrf_token %}
+
+                {% if form.errors %}
+                <div class="alert alert-danger border-0 shadow-sm animate-shake">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-exclamation-circle fa-lg me-3"></i>
+                        <div>
+                            <strong class="d-block mb-1">Please correct the following errors:</strong>
+                            <ul class="mb-0 small ps-3">
+                                {% for field in form %}
+                                    {% for error in field.errors %}<li><strong>{{ field.label }}:</strong> {{ error }}</li>{% endfor %}
+                                {% endfor %}
+                                {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Section: User Account -->
+                <div class="form-section mb-5">
+                    <h5 class="text-accent fw-bold mb-4 d-flex align-items-center">
+                        <span class="badge bg-accent me-2">1</span> User Account Security
+                    </h5>
+                    <div class="row g-4">
+                        {% if not form.instance.pk %}
+                        <div class="col-md-6">
+                            <label class="form-label">Username</label>
+                            <div class="input-icon-wrap">
+                                <i class="fas fa-at input-icon"></i>
+                                {{ form.username }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Password</label>
+                            <div class="input-icon-wrap">
+                                <i class="fas fa-lock input-icon"></i>
+                                {{ form.password }}
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="col-12 text-center py-3 bg-light rounded border-dashed">
+                            <p class="text-muted mb-0"><i class="fas fa-shield-alt me-2"></i> User credentials are managed via the System Security module. <a href="#" class="text-accent fw-bold ms-2">Request Reset</a></p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Section: Personal Details -->
+                <div class="form-section mb-5">
+                    <h5 class="text-accent fw-bold mb-4 d-flex align-items-center">
+                        <span class="badge bg-accent me-2">2</span> Personal Information
+                    </h5>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label">First Name</label>
+                            <div class="input-icon-wrap">
+                                <i class="fas fa-user input-icon"></i>
+                                {{ form.first_name }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Last Name</label>
+                            <div class="input-icon-wrap">
+                                <i class="fas fa-user input-icon"></i>
+                                {{ form.last_name }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Email Address</label>
+                            <div class="input-icon-wrap">
+                                <i class="fas fa-envelope input-icon"></i>
+                                {{ form.email }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Phone Number</label>
+                            <div class="input-icon-wrap">
+                                <i class="fas fa-phone input-icon"></i>
+                                {{ form.phone }}
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Home Address</label>
+                            <div class="input-icon-wrap">
+                                <i class="fas fa-map-marker-alt input-icon" style="top: 20px; transform: none;"></i>
+                                {{ form.address }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section: Employment Details -->
+                <div class="form-section mb-4">
+                    <h5 class="text-accent fw-bold mb-4 d-flex align-items-center">
+                        <span class="badge bg-accent me-2">3</span> Employment Engagement
+                    </h5>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label">Department</label>
+                            <div class="input-icon-wrap">
+                                <i class="fas fa-building input-icon"></i>
+                                {{ form.department }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Designation</label>
+                            <div class="input-icon-wrap">
+                                <i class="fas fa-id-badge input-icon"></i>
+                                {{ form.designation }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Date of Joining</label>
+                            <div class="input-icon-wrap">
+                                <i class="fas fa-calendar-plus input-icon"></i>
+                                {{ form.date_of_joining }}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Employment Status</label>
+                            <div class="input-icon-wrap">
+                                <i class="fas fa-toggle-on input-icon"></i>
+                                {{ form.status }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-5 pt-4 border-top d-flex gap-3">
+                    <button type="submit" class="btn btn-primary px-5 py-2 fw-bold text-uppercase letter-spacing-1">
+                        <i class="fas fa-save me-2"></i> Save Changes
+                    </button>
+                    <a href="{% url 'employee_list' %}" class="btn btn-outline-secondary px-4 py-2">
+                        Discard & Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-section {
+        padding: 0 10px;
+    }
+    .letter-spacing-1 { letter-spacing: 1px; }
+    /* Enhance Django auto-generated inputs */
+    .premium-form select, .premium-form input, .premium-form textarea {
+        padding-left: 44px !important;
+        background-color: var(--bg-subtle) !important;
+        border-color: var(--border) !important;
+    }
+    .premium-form select:focus, .premium-form input:focus, .premium-form textarea:focus {
+        background-color: #fff !important;
+        border-color: var(--accent) !important;
+    }
+    .border-dashed { border: 2px dashed var(--border); }
+</style>
+{% endblock %}

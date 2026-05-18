@@ -1,0 +1,68 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Payroll{% endblock %}
+
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col-auto me-auto">
+        <h3 class="fw-bold mb-0">Payroll History</h3>
+    </div>
+    <div class="col-auto">
+        <a href="{% url 'payroll_generate' %}" class="btn btn-primary shadow-sm"><i class="fas fa-magic me-2"></i> Generate Payroll</a>
+    </div>
+</div>
+
+<div class="card-box mb-4">
+    <div class="table-responsive">
+        <table class="table table-hover table-sm align-middle epms-datatable">
+            <thead>
+            <tr>
+                <th>Employee</th>
+                <th>Month/Year</th>
+                <th class="text-end">Basic</th>
+                <th class="text-end">Allowances</th>
+                <th class="text-end">Deductions</th>
+                <th class="text-center">Loan Repayment</th>
+                <th class="text-end">Net Salary</th>
+                <th>Generated On</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for payroll in payrolls %}
+            <tr>
+                <td>{{ payroll.employee }}</td>
+                <td>{{ payroll.month }} {{ payroll.year }}</td>
+                <td class="text-end text-amount">${{ payroll.basic_salary }}</td>
+                <td class="text-end text-amount text-success">+${{ payroll.total_allowances }}</td>
+                <td class="text-end text-amount text-danger">-${{ payroll.total_deductions }}</td>
+                <td class="text-center">
+                    {% for deduction in payroll.deductions.all %}
+                        {% if "Loan Repayment" in deduction.name %}
+                            <span class="badge bg-warning text-dark"><i class="fas fa-hand-holding-usd me-1"></i>${{ deduction.amount }}</span><br>
+                        {% endif %}
+                    {% empty %}
+                        <span class="text-muted">-</span>
+                    {% endfor %}
+                </td>
+                <td class="text-end text-amount"><strong>${{ payroll.net_salary }}</strong></td>
+                <td>{{ payroll.generated_date }}</td>
+                <td>
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'payroll_edit' payroll.payroll_id %}" class="btn btn-sm btn-outline-primary"><i
+                                class="fas fa-edit"></i> Edit</a>
+                        <a href="{% url 'payslip_view' payroll.payroll_id %}" class="btn btn-sm btn-dark"><i
+                                class="fas fa-print"></i> Payslip</a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="9" class="text-center">No payroll records generated yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+{% endblock %}

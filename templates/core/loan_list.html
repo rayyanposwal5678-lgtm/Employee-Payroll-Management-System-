@@ -1,0 +1,93 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Loans{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card-box h-100">
+            <h5 class="mb-4">Issue New Loan</h5>
+            <form method="post">
+                {% csrf_token %}
+                {% if form.errors %}
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        {% for field in form %}
+                        {% for error in field.errors %}
+                        <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                        {% endfor %}
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+                <div class="mb-3">
+                    <label class="form-label">Employee</label>
+                    {{ form.employee }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Amount</label>
+                    {{ form.loan_amount }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Monthly Repayment</label>
+                    {{ form.monthly_repayment }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Issue Date</label>
+                    {{ form.issue_date }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Status</label>
+                    {{ form.status }}
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mt-2"><i class="fas fa-hand-holding-usd"></i> Issue Loan</button>
+            </form>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card-box h-100">
+            <h5 class="mb-4">Active Loans</h5>
+            <div class="table-responsive">
+                <table class="table table-hover epms-datatable">
+                <thead>
+                    <tr>
+                        <th>Loan ID</th>
+                        <th>Employee</th>
+                        <th>Amount</th>
+                        <th>Paid</th>
+                        <th>Balance</th>
+                        <th>Monthly</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for loan in loans %}
+                    <tr>
+                        <td>#{{ loan.loan_id }}</td>
+                        <td>{{ loan.employee }}</td>
+                        <td>${{ loan.loan_amount }}</td>
+                        <td class="text-success">${{ loan.total_paid }}</td>
+                        <td class="text-danger fw-bold">${{ loan.balance }}</td>
+                        <td>
+                            ${{ loan.monthly_repayment }}
+                            {% if loan.monthly_repayment == 0 %}
+                            <i class="fas fa-exclamation-triangle text-warning"
+                                title="No auto-deduction! Re-issue loan."></i>
+                            {% endif %}
+                        </td>
+                        <td><span
+                                class="badge bg-{% if loan.status == 'Active' %}success{% else %}secondary{% endif %}">{{
+                                loan.status }}</span></td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5">No active loans.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

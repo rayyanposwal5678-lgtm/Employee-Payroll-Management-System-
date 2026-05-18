@@ -1,0 +1,56 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Employees{% endblock %}
+
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col-auto me-auto">
+        <h3 class="fw-bold mb-0">Employees</h3>
+    </div>
+    <div class="col-auto">
+        <a href="{% url 'employee_add' %}" class="btn btn-primary shadow-sm"><i class="fas fa-plus me-2"></i> Add Employee</a>
+    </div>
+</div>
+
+<div class="card-box mb-4">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle epms-datatable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Department</th>
+                <th>Designation</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for employee in employees %}
+            <tr>
+                <td>{{ employee.employee_id }}</td>
+                <td>{{ employee.first_name }} {{ employee.last_name }}</td>
+                <td>{{ employee.department.name }}</td>
+                <td>{{ employee.designation.title }}</td>
+                <td>
+                    <span class="badge badge-compact {% if employee.status == 'Active' %}bg-success{% else %}bg-secondary{% endif %}">
+                        {{ employee.status }}
+                    </span>
+                </td>
+                <td>
+                    <a href="{% url 'employee_edit' employee.pk %}" class="btn btn-sm btn-info text-white"><i
+                            class="fas fa-edit"></i></a>
+                    <a href="{% url 'employee_delete' employee.pk %}" class="btn btn-sm btn-danger"><i
+                            class="fas fa-trash"></i></a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center">No employees found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+{% endblock %}

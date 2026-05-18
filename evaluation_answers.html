@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semester Project Evaluation Quiz Answers</title>
+    <!-- GitHub Markdown CSS for styling -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.2.0/github-markdown-light.min.css">
+    <!-- Mermaid for diagrams -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <!-- Marked for Markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+        }
+
+        @media (max-width: 767px) {
+            body {
+                padding: 15px;
+            }
+        }
+
+        @media print {
+            body {
+                width: 100%;
+                max-width: none;
+                padding: 0;
+            }
+
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body class="markdown-body">
+    <div class="no-print"
+        style="margin-bottom: 20px; padding: 10px; background: #e1f5fe; border: 1px solid #0288d1; border-radius: 5px; color: #01579b;">
+        <strong>Instructions:</strong> This document is ready to print. Press <kbd>Ctrl + P</kbd> (or <kbd>Cmd +
+            P</kbd>) and select "Save as PDF" as the printer.
+    </div>
+    <div id="content"></div>
+
+    <!-- Hidden source markdown -->
+    <textarea id="source" style="display:none;">
+# Semester Project Evaluation Quiz Answers
+
+## Question 1: Class Diagram
+
+Here is the UML Class Diagram reflecting the actual implementation in `core/models.py`.
+
+```mermaid
+classDiagram
+    class User {
+        +int user_id
+        +String username
+        +String password
+        +String email
+        +String first_name
+        +String last_name
+        +bool is_staff
+        +bool is_superuser
+    }
+
+    class Department {
+        +int department_id
+        +String name
+        +String description
+        +__str__()
+    }
+
+    class Designation {
+        +int designation_id
+        +String title
+        +Decimal basic_salary
+        +Date created_date
+        +__str__()
+    }
+
+    class Employee {
+        +int employee_id
+        +String first_name
+        +String last_name
+        +String email
+        +String phone
+        +String address
+        +Date date_of_joining
+        +String status
+        +__str__()
+    }
+
+    class Attendance {
+        +int attendance_id
+        +Date date
+        +String status
+        +__str__()
+    }
+
+    class Payroll {
+        +int payroll_id
+        +String month
+        +int year
+        +Decimal basic_salary
+        +Decimal total_allowances
+        +Decimal total_deductions
+        +Decimal net_salary
+        +Date generated_date
+        +__str__()
+    }
+
+    class Payroll_Allowance {
+        +int id
+        +String name
+        +Decimal amount
+        +__str__()
+    }
+
+    class Payroll_Deduction {
+        +int id
+        +String name
+        +Decimal amount
+        +__str__()
+    }
+
+    class Loan {
+        +int loan_id
+        +Decimal loan_amount
+        +Decimal monthly_repayment
+        +Date issue_date
+        +String status
+        +__str__()
+    }
+
+    class Loan_Payment {
+        +int payment_id
+        +Date payment_date
+        +Decimal amount
+        +__str__()
+    }
+
+    class Payslip {
+        +int payslip_id
+        +Date generated_date
+        +String pdf_path
+        +__str__()
+    }
+
+    %% Relationships
+    Employee "1" -- "1" User : OneToOne
+    Employee "*" -- "1" Department : ForeignKey
+    Employee "*" -- "1" Designation : ForeignKey
+    
+    Attendance "*" -- "1" Employee : ForeignKey
+    
+    Payroll "*" -- "1" Employee : ForeignKey
+    Payroll "1" -- "*" Payroll_Allowance : ForeignKey (related_name='allowances')
+    Payroll "1" -- "*" Payroll_Deduction : ForeignKey (related_name='deductions')
+    
+    Payslip "1" -- "1" Payroll : OneToOne
+    
+    Loan "*" -- "1" Employee : ForeignKey
+    Loan "1" -- "*" Loan_Payment : ForeignKey (related_name='payments')
+    Loan_Payment "*" -- "1" Employee : ForeignKey
+```
+
+---
+
+## Question 2: System Functionality
+
+### 1. What problem does your system solve?
+The **Employee Payroll Management System (EPMS)** solves the problem of inefficient and error-prone manual management of employee records and salary calculations. It centralizes employee data, automates complex payroll computations (factoring in allowances, deductions, and loans), and provides a secure, role-based interface for both Admins (to manage the organization) and Employees (to view their own status and slips).
+
+### 2. Describe two key functionalities of your system.
+1.  **Automated Payroll Generation**: The system automatically aggregates an employee's detailed financial data—including their `Designation`'s basic salary, individual `Payroll_Allowance`s, and `Payroll_Deduction`s—to calculate the final **Net Salary**. It generates a permanent `Payroll` record and visualizes monthly trends for the admin.
+2.  **Role-Based Access Control (RBAC)**: The system strictly distinguishes between **Admins** and **Employees**. 
+    *   **Admins** have a comprehensive Dashboard to create employees, manage departments, and issue loans.
+    *   **Employees** have a restricted, read-only interface where they can securely view their own Profile (`employee_profile`), Salary History (`employee_salary`), and Payslips, ensuring data privacy.
+
+### 3. Explain how the database is used to support these functionalities.
+The relational database (SQLite/PostgreSQL) underpins these features by maintaining data integrity through **Foreign Keys** and **cascading behaviors**:
+*   **Normalization**: `Designation` and `Department` are stored as separate tables linked to `Employee` via Foreign Keys. This ensures that if a Department's name changes, it reflects for all associated employees instantly.
+*   **Data Integrity**: The `Payroll` table links to `Employee` with `on_delete=models.CASCADE`. This ensures that payroll records are inextricably tied to valid employee records.
+*   **Aggregation**: To calculate "Total Expenses" for the dashboard charts, the database performs efficient aggregations (Sum/Count) directly on the `Payroll` and `Employee` tables rather than processing loops in Python.
+    </textarea>
+
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({ startOnLoad: false });
+
+        // Get markdown source
+        const markdown = document.getElementById('source').value;
+
+        // Render Markdown
+        const contentDiv = document.getElementById('content');
+        contentDiv.innerHTML = marked.parse(markdown);
+
+        // Find mermaid code blocks and process them
+        const mermaidBlocks = contentDiv.querySelectorAll('.language-mermaid');
+        mermaidBlocks.forEach((block, index) => {
+            const graphDefinition = block.textContent;
+            const mermaidDiv = document.createElement('div');
+            mermaidDiv.className = 'mermaid';
+            mermaidDiv.textContent = graphDefinition;
+
+            // Replace the code block with the div
+            block.parentElement.replaceWith(mermaidDiv);
+        });
+
+        // Run mermaid rendering
+        mermaid.run();
+    </script>
+</body>
+
+</html>

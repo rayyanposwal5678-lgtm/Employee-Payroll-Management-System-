@@ -1,0 +1,60 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Designations{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card-box h-100">
+            <h5 class="mb-4">Add Designation</h5>
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Title</label>
+                    {{ form.title }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Basic Salary</label>
+                    {{ form.basic_salary }}
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mt-2">
+                    <i class="fas fa-plus-circle"></i> Add Designation
+                </button>
+            </form>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card-box h-100">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="mb-0">Designation List</h5>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover epms-datatable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Basic Salary</th>
+                        <th>Created Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for desig in designations %}
+                    <tr>
+                        <td>{{ desig.designation_id }}</td>
+                        <td>{{ desig.title }}</td>
+                        <td>${{ desig.basic_salary }}</td>
+                        <td>{{ desig.created_date }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">No designations yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </div>
+</div>
+{% endblock %}

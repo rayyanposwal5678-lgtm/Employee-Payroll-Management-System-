@@ -1,0 +1,24 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Delete Employee{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card-box text-center py-5">
+            <h4 class="text-danger mb-4 fw-bold"><i class="fas fa-exclamation-triangle"></i> Confirm Deletion</h4>
+            <p class="lead text-dark">Are you sure you want to delete employee <strong>{{ employee.first_name }} {{
+                    employee.last_name }}</strong>?</p>
+            <p class="text-muted">This action will also delete the associated user account and cannot be undone.</p>
+
+            <form method="post" class="mt-4">
+                {% csrf_token %}
+                <div class="d-flex justify-content-center gap-3 mt-4">
+                    <a href="{% url 'employee_list' %}" class="btn border">Cancel</a>
+                    <button type="submit" class="btn btn-danger px-4 shadow-sm">Yes, Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Salary Details{% endblock %}
+
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col-12">
+        <h3 class="fw-bold mb-3">Salary Structure Details</h3>
+        <div class="alert alert-info border-0 shadow-sm">
+            <i class="fas fa-info-circle me-2"></i> This view provides the internal IDs and breakdown of salary components
+            (Allowances, Deductions, Loans) for generated payrolls.
+        </div>
+    </div>
+</div>
+
+<div class="card-box">
+    <div class="table-responsive">
+        <table class="table table-hover table-sm align-middle epms-datatable">
+            <thead>
+                <tr>
+                    <th>Salary ID</th>
+                    <th>Emp ID</th>
+                    <th>Employee Name</th>
+                    <th class="text-end">Basic Salary</th>
+                    <th class="text-center">Allowances</th>
+                    <th class="text-center">Deductions</th>
+                    <th>Loan ID(s)</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+        <tbody>
+            {% for payroll in payrolls %}
+            <tr>
+                <td>{{ payroll.payroll_id }}</td>
+                <td>{{ payroll.employee.employee_id }}</td>
+                <td>{{ payroll.employee }}</td>
+                <td class="text-end text-amount">${{ payroll.basic_salary }}</td>
+                <td>
+                    {% for allowance in payroll.allowances.all %}
+                    <span class="badge bg-success">{{ allowance.name }}</span>
+                    {% empty %}
+                    <span class="text-muted">-</span>
+                    {% endfor %}
+                </td>
+                <td>
+                    {% for deduction in payroll.deductions.all %}
+                    {% if "Loan Repayment" not in deduction.name %}
+                    <span class="badge bg-danger">{{ deduction.name }}</span>
+                    {% endif %}
+                    {% empty %}
+                    {% endfor %}
+
+                    {% comment %} Check if there are only loans and no normal deductions to show a dash if needed, but
+                    tricky in loop. {% endcomment %}
+                </td>
+                <td>
+                    {% comment %}
+                    Deductions named "Loan Repayment (ID: ...)" contain the Loan ID.
+                    Ideally we would have a direct link, but based on current schema we parsing or checking related
+                    active loans.
+                    However, the user asked for "Loan ID" in this bar.
+                    We can attempt to show Active Loans for this employee, or the Loan ID linked to the deduction.
+                    {% endcomment %}
+
+                    {% for deduction in payroll.deductions.all %}
+                    {% if "Loan Repayment" in deduction.name %}
+                    <span class="badge bg-warning text-dark">{{ deduction.name }}</span><br>
+                    {% endif %}
+                    {% endfor %}
+                </td>
+                <td class="text-end">
+                    <a href="{% url 'payroll_edit' payroll.payroll_id %}" class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i> Edit</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="8" class="text-center">No salary records found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+{% endblock %}

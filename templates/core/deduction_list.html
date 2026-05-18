@@ -1,0 +1,67 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Deductions{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card-box h-100">
+            <h5 class="mb-4">Add Deduction to Payroll</h5>
+            <div class="alert alert-warning">
+                <small><i class="fas fa-exclamation-circle"></i> <strong>Note:</strong> You can only add deductions to
+                    generated payrolls. If an employee is not listed, go to <a
+                        href="{% url 'payroll_list' %}">Payroll</a> and generate payroll for them first.</small>
+            </div>
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Payroll (Employee - Month)</label>
+                    {{ form.payroll }}
+                    <small class="text-muted">Select the generated payroll record.</small>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Deduction Name</label>
+                    {{ form.name }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Amount</label>
+                    {{ form.amount }}
+                </div>
+                <button type="submit" class="btn btn-danger w-100 mt-3"><i class="fas fa-minus"></i> Add Deduction</button>
+            </form>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card-box h-100">
+            <h5 class="mb-4">Deduction History</h5>
+            <div class="table-responsive">
+                <table class="table table-hover epms-datatable">
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Month</th>
+                        <th>Deduction Name</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for deduction in deductions %}
+                    <tr>
+                        <td>{{ deduction.payroll.employee }}</td>
+                        <td>{{ deduction.payroll.month }} {{ deduction.payroll.year }}</td>
+                        <td>{{ deduction.name }}</td>
+                        <td class="text-danger">-${{ deduction.amount }}</td>
+
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4">No deductions recorded.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,119 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Generate Payroll{% endblock %}
+{% block breadcrumb %}Payroll Generation{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center animate-slide-up">
+    <div class="col-lg-7">
+        <div class="card-box premium-shadow-lg p-0 overflow-hidden">
+            <div class="bg-blue-gradient p-5 text-white text-center position-relative">
+                <div class="position-absolute top-0 start-0 w-100 h-100 bg-shimmer opacity-10"></div>
+                <div class="icon-lg bg-white bg-opacity-20 rounded-circle mx-auto mb-4 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; font-size: 2.5rem;">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                </div>
+                <h3 class="fw-bold mb-2">Generate Monthly Payroll</h3>
+                <p class="mb-0 opacity-75">Automate salary calculations for your workforce in seconds.</p>
+            </div>
+
+            <div class="p-5">
+                <p class="text-muted text-center mb-5">Ensure all attendance records, daily allowances, and manual deductions are finalized before initiating the generation process.</p>
+
+                <form method="post" class="premium-form">
+                    {% csrf_token %}
+                    
+                    <div class="mb-4">
+                        <label for="employee_id" class="form-label text-uppercase fw-bold small letter-spacing-1">Target Personnel</label>
+                        <div class="input-icon-wrap">
+                            <i class="fas fa-user-friends input-icon"></i>
+                            <select name="employee_id" id="employee_id" class="form-select form-control-lg">
+                                <option value="all">🚀 All Active Employees (Batch Process)</option>
+                                <optgroup label="Direct Personnel Selection">
+                                    {% for emp in active_employees %}
+                                    <option value="{{ emp.employee_id }}">{{ emp.first_name }} {{ emp.last_name }} ({{ emp.designation.title }})</option>
+                                    {% endfor %}
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-6">
+                            <label class="form-label text-uppercase fw-bold small letter-spacing-1">Payout Month</label>
+                            <div class="input-icon-wrap">
+                                <i class="fas fa-calendar-alt input-icon"></i>
+                                <select name="month" class="form-select" required>
+                                    <option value="" disabled selected>Select Month</option>
+                                    <option value="January">January</option>
+                                    <option value="February">February</option>
+                                    <option value="March">March</option>
+                                    <option value="April">April</option>
+                                    <option value="May">May</option>
+                                    <option value="June">June</option>
+                                    <option value="July">July</option>
+                                    <option value="August">August</option>
+                                    <option value="September">September</option>
+                                    <option value="October">October</option>
+                                    <option value="November">November</option>
+                                    <option value="December">December</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-uppercase fw-bold small letter-spacing-1">Fiscal Year</label>
+                            <div class="input-icon-wrap">
+                                <i class="fas fa-hashtag input-icon"></i>
+                                <input type="number" name="year" class="form-control" placeholder="Year" required
+                                    min="2000" max="2100" value="{% now 'Y' %}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-column gap-3">
+                        <button type="submit" class="btn btn-primary btn-lg py-3 fw-bold text-uppercase letter-spacing-1 shadow-sm">
+                            <i class="fas fa-play-circle me-2"></i> Start Generation Process
+                        </button>
+                        <a href="{% url 'payroll_list' %}" class="btn btn-light py-2 text-muted">
+                            Cancel and Return to Records
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="mt-4 text-center">
+            <div class="badge bg-warning-light text-warning-dark p-2 px-3 border-warning-soft">
+                <i class="fas fa-shield-alt me-2"></i> System will skip employees who already have a record for this period.
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-blue-gradient {
+        background: linear-gradient(135deg, var(--accent), var(--secondary));
+    }
+    .bg-shimmer {
+        background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.2) 50%, transparent 60%);
+        background-size: 200% 200%;
+        animation: shimmer 5s infinite linear;
+    }
+    @keyframes shimmer {
+        0% { background-position: -200% -200%; }
+        100% { background-position: 200% 200%; }
+    }
+    .premium-form .form-select, .premium-form .form-control {
+        padding-left: 44px !important;
+        height: 52px;
+        background-color: var(--bg-subtle) !important;
+        border: 1.5px solid var(--border) !important;
+        border-radius: 12px;
+    }
+    .premium-form .form-select:focus, .premium-form .form-control:focus {
+        border-color: var(--accent) !important;
+        background-color: #fff !important;
+        box-shadow: 0 0 0 4px var(--accent-light) !important;
+    }
+    .letter-spacing-1 { letter-spacing: 1px; }
+</style>
+{% endblock %}

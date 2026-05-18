@@ -1,0 +1,58 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Departments{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card-box h-100">
+            <h5 class="mb-4">Add Department</h5>
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Name</label>
+                    {{ form.name }}
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    {{ form.description }}
+                </div>
+                <button type="submit" class="btn btn-primary w-100 mt-2">
+                    <i class="fas fa-plus-circle"></i> Add Department
+                </button>
+            </form>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card-box h-100">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="mb-0">Department List</h5>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover epms-datatable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dept in departments %}
+                    <tr>
+                        <td>{{ dept.department_id }}</td>
+                        <td>{{ dept.name }}</td>
+                        <td>{{ dept.description }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3">No departments yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPMS Entity Relationship Diagram</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .mermaid {
+            margin: 0 auto;
+            max-width: 100%;
+        }
+
+        @media print {
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="no-print"
+        style="margin-bottom: 20px; padding: 10px; background: #e1f5fe; border: 1px solid #0288d1; color: #01579b;">
+        <strong>Instructions:</strong> Press <kbd>Ctrl + P</kbd> and select "Save as PDF" to download.
+    </div>
+
+    <h1>Entity Relationship Diagram (ERD)</h1>
+
+    <div class="mermaid">
+        erDiagram
+        User {
+        int user_id PK
+        string username
+        string email
+        string password
+        boolean is_staff
+        boolean is_superuser
+        }
+
+        Department {
+        int department_id PK
+        string name
+        text description
+        }
+
+        Designation {
+        int employee_id
+        int designation_id PK
+        string title
+        decimal basic_salary
+        date created_date
+        }
+
+        Employee {
+        int employee_id PK
+        string first_name
+        string last_name
+        string email
+        string phone
+        text address
+        date date_of_joining
+        string status
+        int department_id FK
+        int designation_id FK
+        int user_id FK
+        }
+
+        Attendance {
+        int attendance_id PK
+        date date
+        string status
+        int employee_id FK
+        }
+
+        Payroll {
+        int payroll_id PK
+        string month
+        int year
+        decimal basic_salary
+        decimal total_allowances
+        decimal total_deductions
+        decimal net_salary
+        date generated_date
+        int employee_id FK
+        }
+
+        Payroll_Allowance {
+        int employee_id
+        int allowance_id PK
+        string allowance_name
+        decimal amount
+        int payroll_id FK
+        }
+
+        Payroll_Deduction {
+        int employee_id
+        int deduction_id PK
+        string deduction_name
+        decimal amount
+        int payroll_id FK
+        }
+
+        Loan {
+        int loan_id PK
+        decimal loan_amount
+        decimal monthly_repayment
+        date issue_date
+        string status
+        int employee_id FK
+        }
+
+        Loan_Payment {
+        int payment_id PK
+        date payment_date
+        decimal amount
+        int loan_id FK
+        int employee_id FK
+        }
+
+        Payslip {
+        int employee_id
+        int payslip_id PK
+        date generated_date
+        string pdf_path
+        int payroll_id FK
+        }
+
+        %% Relationships
+        User ||--|| Employee : "has account"
+        Department ||--|{ Employee : "contains"
+        Designation ||--|{ Employee : "assigned to"
+
+        Employee ||--|{ Attendance : "records"
+        Employee ||--|{ Payroll : "receives"
+        Employee ||--|{ Loan : "requests"
+        Employee ||--|{ Loan_Payment : "makes"
+
+        Payroll ||--|{ Payroll_Allowance : "includes"
+        Payroll ||--|{ Payroll_Deduction : "includes"
+        Payroll ||--|| Payslip : "generates"
+
+        Loan ||--|{ Loan_Payment : "tracks"
+    </div>
+
+    <script>
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+</body>
+
+</html>

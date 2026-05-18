@@ -1,0 +1,73 @@
+{% extends 'core/base.html' %}
+
+{% block title %}My Profile{% endblock %}
+{% block breadcrumb %}My Profile{% endblock %}
+
+{% block content %}
+<div class="row g-4 animate-slide-up">
+    <div class="col-md-4">
+        <div class="card-box text-center py-5 premium-shadow-lg">
+            <div class="user-avatar-lg mx-auto mb-4 bg-accent-light text-accent d-flex align-items-center justify-content-center" style="width: 100px; height: 100px; border-radius: 50%; font-size: 2.5rem;">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            <h4 class="fw-bold mb-1 text-dark">{{ employee.first_name }} {{ employee.last_name }}</h4>
+            <p class="text-muted mb-3">{{ employee.designation.title }}</p>
+            <span class="badge bg-success-light text-success px-3 py-2 rounded-pill fw-bold">Active Employee</span>
+            
+            <div class="mt-4 pt-4 border-top text-start px-3">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="icon-sm bg-light rounded me-3 text-primary text-center" style="width: 32px; height: 32px; line-height: 32px;">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <span class="text-secondary small" style="word-break: break-all;">{{ employee.email }}</span>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div class="icon-sm bg-light rounded me-3 text-primary text-center" style="width: 32px; height: 32px; line-height: 32px;">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <span class="text-secondary small">{{ employee.phone }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card-box premium-shadow-lg h-100">
+            <h5 class="fw-bold mb-4 border-bottom pb-3"><i class="fas fa-info-circle text-accent me-2"></i> Employment Information</h5>
+            
+            <div class="row g-4">
+                <div class="col-md-6">
+                    <label class="form-label d-block text-muted small text-uppercase fw-bold letter-spacing-1">Employee ID</label>
+                    <p class="h6 fw-semibold text-dark">#{{ employee.employee_id }}</p>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label d-block text-muted small text-uppercase fw-bold letter-spacing-1">Department</label>
+                    <p class="h6 fw-semibold text-dark">{{ employee.department.name }}</p>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label d-block text-muted small text-uppercase fw-bold letter-spacing-1">Date of Joining</label>
+                    <p class="h6 fw-semibold text-dark">{{ employee.date_of_joining }}</p>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label d-block text-muted small text-uppercase fw-bold letter-spacing-1">Current Status</label>
+                    <p class="h6 fw-semibold text-success"><i class="fas fa-check-circle me-1"></i> {{ employee.status }}</p>
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label d-block text-muted small text-uppercase fw-bold letter-spacing-1">Home Address</label>
+                    <p class="h6 fw-semibold text-dark">{{ employee.address|default:"No address provided" }}</p>
+                </div>
+            </div>
+
+            <div class="mt-5 p-4 rounded bg-accent-light border-accent-soft d-flex align-items-center animate-pulse-subtle">
+                <div class="me-4 text-accent">
+                    <i class="fas fa-shield-alt fa-2x"></i>
+                </div>
+                <div>
+                    <h6 class="fw-bold mb-1 text-accent-dark">Account Security</h6>
+                    <p class="mb-0 text-muted small">Your account is managed by the central HR department. For password changes or data updates, please contact your administrator.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Edit Payroll{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card-box shadow-sm">
+            <h4 class="fw-bold mb-4">Edit Payroll Record</h4>
+            
+            <div class="alert alert-secondary border-0 mb-4" style="font-size: 0.9rem;">
+                <strong>Employee:</strong> {{ employee.first_name }} {{ employee.last_name }} <br>
+                <strong>Month:</strong> {{ payroll.month }} {{ payroll.year }} <br>
+                <strong>Generated On:</strong> {{ payroll.generated_date }}
+            </div>
+
+            <form method="post" action="{% url 'payroll_edit' payroll.payroll_id %}">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label class="form-label fw-semibold text-muted" style="font-size: 0.85rem;">Basic Salary</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-0"><i class="fas fa-dollar-sign text-muted"></i></span>
+                        {{ form.basic_salary }}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold text-muted" style="font-size: 0.85rem;">Total Allowances</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-0"><i class="fas fa-plus text-success"></i></span>
+                        {{ form.total_allowances }}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold text-muted" style="font-size: 0.85rem;">Total Deductions</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-0"><i class="fas fa-minus text-danger"></i></span>
+                        {{ form.total_deductions }}
+                    </div>
+                    {% if form.total_deductions.errors %}
+                        <div class="text-danger mt-1 small">{{ form.total_deductions.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold text-dark" style="font-size: 0.95rem;">Net Salary <span class="badge bg-success ms-1" style="font-size: 0.65rem;">Auto-Calculated</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-0"><i class="fas fa-equals text-primary"></i></span>
+                        {{ form.net_salary }}
+                    </div>
+                    <div class="form-text mt-2"><i class="fas fa-info-circle me-1"></i> Net Salary = Basic Salary + Allowances − Deductions. It updates automatically.</div>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="{% url 'payroll_list' %}" class="btn btn-light shadow-sm me-md-2">Cancel</a>
+                    <button type="submit" class="btn btn-primary shadow-sm">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const basic = document.getElementById('id_basic_salary');
+    const allowances = document.getElementById('id_total_allowances');
+    const deductions = document.getElementById('id_total_deductions');
+    const net = document.getElementById('id_net_salary');
+    
+    if (basic && allowances && deductions && net) {
+        net.readOnly = true;
+        net.style.backgroundColor = '#f1f5f9';
+        net.style.fontWeight = '700';
+        
+        function recalc() {
+            const b = parseFloat(basic.value) || 0;
+            const a = parseFloat(allowances.value) || 0;
+            const d = parseFloat(deductions.value) || 0;
+            net.value = (b + a - d).toFixed(2);
+        }
+        
+        basic.addEventListener('input', recalc);
+        allowances.addEventListener('input', recalc);
+        deductions.addEventListener('input', recalc);
+    }
+});
+</script>
+{% endblock %}
