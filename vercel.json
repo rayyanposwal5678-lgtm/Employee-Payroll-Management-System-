@@ -3,19 +3,21 @@
   "buildCommand": "bash build.sh",
   "builds": [
     {
-      "src": "epms/wsgi.py",
+      "src": "wsgi.py",
       "use": "@vercel/python",
       "config": { 
         "maxLambdaSize": "15mb", 
-        "runtime": "python3.12",
-        "pythonVersion": "3.12"
+        "runtime": "python3.12"
       }
     }
   ],
   "routes": [
     {
       "src": "/static/(.*)",
-      "dest": "/static/$1"
+      "dest": "/static/$1",
+      "headers": {
+        "Cache-Control": "public, max-age=3600"
+      }
     },
     {
       "src": "/media/(.*)",
@@ -23,10 +25,11 @@
     },
     {
       "src": "/(.*)",
-      "dest": "epms/wsgi.py"
+      "dest": "wsgi.py"
     }
   ],
   "env": {
-    "PYTHON_VERSION": "3.12"
+    "PYTHON_VERSION": "3.12",
+    "DEBUG": "False"
   }
 }
