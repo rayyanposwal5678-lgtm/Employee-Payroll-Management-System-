@@ -24,7 +24,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-s7iin$d#luj57#s!10*dm-wn=p9r3&bqt%hl%o3yx$83e4ag$2')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False') == 'True'
+# Default to True for local development, set to False on Vercel
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 # Support both local development and Vercel deployment
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,.vercel.app').split(',')
@@ -140,17 +141,24 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'
 
-# Security Settings for Production
-if not DEBUG:
+# Security Settings for Production (only on Vercel or non-localhost)
+# DISABLE all SSL/HSTS for localhost to allow development via http://
+IS_VERCEL = os.getenv('VERCEL') is not None
+
+if not DEBUG and IS_VERCEL:
+    # Only apply strict security on Vercel deployment
     SECURE_HSTS_SECONDS = 31536000  # 1 year
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    # Support HTTPS detection via X-Forwarded-Proto header from Vercel
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     
     # Configure CSRF trusted origins for Vercel and custom domains
     csrf_origins = os.getenv('CSRF_TRUSTED_ORIGINS', 'https://*.vercel.app')
     CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in csrf_origins.split(',') if origin.strip()]
+else:
+    # Development: Allow insecure cookies for localhost
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
