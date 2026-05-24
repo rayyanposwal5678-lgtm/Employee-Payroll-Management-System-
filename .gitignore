@@ -1,0 +1,49 @@
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Virtual environment
+.venv/
+venv/
+ENV/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Django
+*.log
+local_settings.py
+/media/
+/staticfiles/
+db.sqlite3
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+*.egg-info/
+dist/
+build/
+
+# Testing
+.coverage
+.pytest_cache/
+htmlcov/
+
+# Vercel
+.vercel
+.vercel_build_error.log
