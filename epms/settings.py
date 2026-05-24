@@ -26,7 +26,8 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-s7iin$d#luj57#s!10*dm-wn=p
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+# Support both local development and Vercel deployment
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,.vercel.app').split(',')
 
 
 # Application definition
@@ -147,4 +148,9 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',') if os.getenv('CSRF_TRUSTED_ORIGINS') else []
+    # Support HTTPS detection via X-Forwarded-Proto header from Vercel
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    
+    # Configure CSRF trusted origins for Vercel and custom domains
+    csrf_origins = os.getenv('CSRF_TRUSTED_ORIGINS', 'https://*.vercel.app')
+    CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in csrf_origins.split(',') if origin.strip()]
